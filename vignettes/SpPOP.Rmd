@@ -1,0 +1,377 @@
+---
+title: "SpPOP: Package for Generation of Spatial Population under Different Levels of Relationships among Variables"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SpPOP: Package for Generation of Spatial Population under Different Levels of Relationships among Variables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+****<br/>
+*The developed package can be used to generate a spatial population for different levels of relationships among the dependent and auxiliary variables along with spatially varying model parameters. A spatial layout is designed as a [0,k-1]x[0,k-1] square region on which observations are collected at (k x k) lattice points with a unit distance between any two neighbouring points along the horizontal and vertical axes. Regression coefficients of the spatially varying regression model are generated using both linear and non-linear function of locations. In total eight different types of population can be generated. Details of which are given below.*
+
+****<br/>
+
+### **Generation of simulated spatial population based on spatially varying regression model where the model parameters are generated based on both linear and non-linear functions of latitudes and longitudes**
+****<br/>
+
+**Generation of spatial coordinates of locations**
+
+*The size of the population is N= k^2^. The spatial coordinates of the locations of observations can be expressed by the following equations*
+
+
+*( Latitude~i~, Longitude~i~ )= ( mod(i-1,k), [(i-1)/k] ), i= 1,..., k^2^*
+
+*where, mod(i-1,k) is the remainder of (i-1) divided by  k and  [(i-1)/k]  is the integer part of the number (i-1)/k *
+
+
+**Generation of auxiliary variable from uniform distribution**
+
+*Auxiliary variables has been generated independently from the uniform distribution i.e. U(0,1)*
+
+X =runif(N,0,1)
+
+**Error term drawn independently from normal distribution i.e. N(0,1)**
+
+e =rnorm(N, mean=0, sd=1)
+
+
+### For the function SpPOP_linear1
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and one explanatory variable (i.e. X). The auxiliary variable has been generated following U(0,1) and the regression coefficients are generated as linear function of latitudes and longitudes *
+
+**Generation of spatially varying regression coefficients as linear function of latitudes and longitudes**
+
+
+B~0~=(Latitude~i~+Longitude~i~)/18
+
+B~1~=(Latitude~i~/9)
+
+**Spatially varying regression model for generating the response variable**
+
+
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + B~1~( Latitude~i~,Longitude~i~ )*X~i~ + e~i~     ; i= 1,..., N
+
+``` {r}
+# Examples: Generate an uniform two dimensional grid of lattice points 
+
+library(SpPOP)
+coords_grid=expand.grid(c(1:5),c(1:5))
+coords_grid=as.data.frame(coords_grid)
+names(coords_grid)=cbind("x","y")
+coords_grid
+plot(coords_grid)
+
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+
+coords_grid=expand.grid(c(1:5),c(1:5))
+coords_grid=as.data.frame(coords_grid)
+names(coords_grid)=cbind("x","y")
+coords_grid
+N<-nrow(coords_grid)
+N
+k<-sqrt(nrow(coords_grid))
+k
+
+sp_linear1<-SpPOP_linear1(25,5,c(1:5),c(1:5))
+sp_linear1
+
+```
+
+### For the function SpPOP_linear2
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and three explanatory variables (i.e. X1,X2 and X3). The auxiliary variables have been generated independently from the uniform distribution U(0,1) and the regression coefficients are generated as linear function of latitudes and longitudes *
+
+**Generation of spatially varying regression coefficients as linear function of latitudes and longitudes**
+
+
+B~0~=(Latitude~i~+Longitude~i~)/6
+
+B~1~=(Latitude~i~/3)
+
+B~2~=(Longitude~i~/3)
+
+B~3~=(2*Longitude~i~)
+
+**Generation of auxiliary variables independently from the uniform distribution**
+
+X~1~ =runif(N,0,1),
+X~2~ =runif(N,0,1) and 
+X~3~ =runif(N,0,1)
+
+**Spatially varying regression model for generating the response variable**
+
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + B~1~( Latitude~i~,Longitude~i~ )* X~1i~ + B~2~(Latitude~i~,Longitude~i~)* X~2i~ + B~3~( Latitude~i~,Longitude~i~ )*X~3i~ + e~i~     ; i= 1,..., N
+
+
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_linear2<-SpPOP_linear2(25,5,c(1:5),c(1:5))
+sp_linear2
+
+```
+### For the function SpPOP_linear3
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and one explanatory variable (i.e. X). The auxiliary variable has been generated from the uniform distribution U(0,2) and the regression coefficients are generated as linear function of locations *
+
+**Generation of spatially varying regression coefficients as linear function of latitudes and longitudes**
+
+
+B~0~=(2*(Latitude~i~+Longitude~i~))/6
+
+B~1~=(Latitude~i~/3)
+
+
+
+**Generation of auxiliary variable from the uniform distribution**
+
+X =runif(N,0,2),
+
+
+**Spatially varying regression model for generating the response variable**
+
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + B~1~( Latitude~i~,Longitude~i~ )* X~i~ + e~i~     ; i= 1,..., N
+
+
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_linear3<-SpPOP_linear3(25,5,c(1:5),c(1:5))
+sp_linear3
+
+```
+
+### For the function SpPOP_linear4
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and one explanatory variable (i.e. X). The auxiliary variable has been generated from the uniform distribution U(0,2) and the regression coefficients are generated as linear function of locations. In this function, we have used non-linear model for generating the response variable i.e. the relationship between the response and auxiliary variable is non-linear in nature. *
+
+**Generation of spatially varying regression coefficients as linear function of latitudes and longitudes**
+
+
+B~0~=(2*(Latitude~i~+Longitude~i~))/6
+
+B~1~=(Latitude~i~/3)
+
+
+
+**Generation of auxiliary variable from the uniform distribution**
+
+X =runif(N,0,2),
+
+
+**Spatially varying regression model for generating the response variable**
+**The relation between Y and X is non-linear in the model**
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + exp[B~1~( Latitude~i~,Longitude~i~ )* X~i~] + e~i~     ; i= 1,..., N
+
+
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_linear4<-SpPOP_linear4(25,5,c(1:5),c(1:5))
+sp_linear4
+
+```
+### For the function SpPOP_linear5
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and two explanatory variables (i.e. X1 and X2). The auxiliary variables are drawn independently from the uniform distribution U(0,2) and normal distribution N(1,1) and the regression coefficients are generated as linear function of locations. In this function, we have used non-linear model for generating the response variable i.e. the relationship between the response and auxiliary variables are non-linear in nature. *
+
+**Generation of spatially varying regression coefficients as linear function of latitudes and longitudes**
+
+
+B~0~=(Latitude~i~+Longitude~i~)/6
+
+B~1~=(Latitude~i~/3)
+
+B~2~=(Longitude~i~/3)
+
+**Generation of auxiliary variables independently from the uniform and normal distribution**
+
+X1 =runif(N,0,2) and X2 =rnorm(N,1,1)
+
+
+**Spatially varying regression model for generating the response variable**
+
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + exp[(B~1~( Latitude~i~,Longitude~i~ )* X1~i~)+(B~2~( Latitude~i~,Longitude~i~ )* X2~i~)] + e~i~   ; i= 1,..., N
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_linear5<-SpPOP_linear5(25,5,c(1:5),c(1:5))
+sp_linear5
+
+```
+
+
+### For the function SpPOP_nonlinear1
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and one explanatory variable (i.e. X). The auxiliary variable has been generated from the uniform distribution U(0,1) and the regression coefficients are generated as non-linear function of locations. *
+
+**Generation of spatially varying regression coefficients as non-linear function of latitudes and longitudes**
+
+
+B~0~= 2* sin((pi * Latitude~i~)/6)  
+
+B~1~=(Latitude~i~^2^+Longitude~i~^2^)/18
+
+**Generation of auxiliary variable from the uniform distribution**
+
+X =runif(N,0,1),
+
+
+**Spatially varying regression model for generating the response variable**
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + B~1~( Latitude~i~,Longitude~i~ )* X~i~ + e~i~     ; i= 1,..., N
+
+
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_nonlinear1<-SpPOP_nonlinear1(25,5,c(1:5),c(1:5))
+sp_nonlinear1
+
+```
+### For the function SpPOP_nonlinear2
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and one explanatory variable (i.e. X). The auxiliary variable has been generated from the uniform distribution U(0,1) and the regression coefficients are generated as non-linear function of locations. *
+
+**Generation of spatially varying regression coefficients as non-linear function of latitudes and longitudes**
+
+B~0~= 2 * sin(pi * (Latitude~i~+Longitude~i~)/6) 
+
+B~1~=(1/2)* exp[Latitude~i~+Longitude~i~]
+
+
+**Generation of auxiliary variable from the uniform distribution**
+
+X =runif(N,0,1),
+
+
+**Spatially varying regression model for generating the response variable**
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + B~1~( Latitude~i~,Longitude~i~ )* X~i~ + e~i~     ; i= 1,..., N
+
+
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_nonlinear2<-SpPOP_nonlinear2(25,5,c(1:5),c(1:5))
+sp_nonlinear2
+
+```
+
+### For the function SpPOP_nonlinear3
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and three explanatory variables (i.e. X1,X2 and X3). The auxiliary variables have been generated independently from the uniform distribution U(0,1) and the regression coefficients are generated as non-linear function of latitudes and longitudes *
+
+**Generation of spatially varying regression coefficients as non-linear function of latitudes and longitudes**
+
+
+B~0~= 2* sin((pi * Latitude~i~)/6)  
+
+B~1~=(Latitude~i~^2^+Longitude~i~^2^)/18
+
+B~2~= 4 * sin(pi * (Latitude~i~+Longitude~i~)/6) 
+
+B~3~=(1/2)* exp[Latitude~i~+Longitude~i~]
+
+
+**Generation of auxiliary variables independently from the uniform distribution**
+
+X~1~ =runif(N,0,1),
+X~2~ =runif(N,0,1) and 
+X~3~ =runif(N,0,1)
+
+**Spatially varying regression model for generating the response variable**
+
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + B~1~( Latitude~i~,Longitude~i~ )* X~1i~ + B~2~(Latitude~i~,Longitude~i~)* X~2i~ + B~3~( Latitude~i~,Longitude~i~ )*X~3i~ + e~i~     ; i= 1,..., N
+
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_nonlinear3<-SpPOP_nonlinear3(25,5,c(1:5),c(1:5))
+sp_nonlinear3
+
+```
+### For the function SpPOP_nonlinear4
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and one explanatory variable (i.e. X). The auxiliary variable has been generated from the uniform distribution U(0,2) and the regression coefficients are generated as non-linear function of locations. In this function, we have used non-linear model for generating the response variable i.e. the relationship between the response and auxiliary variable is non-linear in nature. *
+
+**Generation of spatially varying regression coefficients as non-linear function of latitudes and longitudes**
+
+
+B~0~= 2* sin((pi * Latitude~i~)/6)  
+
+B~1~=(Latitude~i~^2^+Longitude~i~^2^)/18
+
+
+**Generation of auxiliary variable from the uniform distribution**
+
+X =runif(N,0,2),
+
+
+**Spatially varying regression model for generating the response variable**
+**The relation between Y and X is non-linear in the model**
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + exp[B~1~( Latitude~i~,Longitude~i~ )* X~i~] + e~i~     ; i= 1,..., N
+
+
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_nonlinear4<-SpPOP_nonlinear4(25,5,c(1:5),c(1:5))
+sp_nonlinear4
+
+```
+### For the function SpPOP_nonlinear5
+*The developed function returns a spatial population consist of simulated response variable (i.e. Y) along with their spatial coordinates,spatially varying coefficients and two explanatory variables (i.e. X1 and X2). The auxiliary variables are drawn independently from the uniform distribution U(0,2) and normal distribution N(1,1) and the regression coefficients are generated as non-linear function of locations. In this function, we have used non-linear model for generating the response variable i.e. the relationship between the response and auxiliary variable is non-linear in nature. *
+
+**Generation of spatially varying regression coefficients as non-linear function of latitudes and longitudes**
+
+
+B~0~= 2* sin((pi * Latitude~i~)/6)  
+
+B~1~=(Latitude~i~^2^+Longitude~i~^2^)/18
+
+B~2~= 4 * sin(pi * (Latitude~i~+Longitude~i~)/6) 
+
+**Generation of auxiliary variable from the uniform and normal distribution**
+
+X1 =runif(N,0,2) and X2 =rnorm(N,1,1)
+
+
+**Spatially varying regression model for generating the response variable**
+**The relation between Y and X's is non-linear in the model**
+
+Y~i~ = B~0~( Latitude~i~,Longitude~i~ ) + exp[(B~1~( Latitude~i~,Longitude~i~ )* X1~i~)+(B~2~( Latitude~i~,Longitude~i~ )* X2~i~)] + e~i~   ; i= 1,..., N
+
+``` {r}
+# Examples: Simulated population along with spatial coordinates and spatially varying model parameters
+
+library(SpPOP)
+sp_nonlinear5<-SpPOP_nonlinear5(25,5,c(1:5),c(1:5))
+sp_nonlinear5
+
+```

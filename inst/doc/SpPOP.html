@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>SpPOP: Package for Generation of Spatial Population under Different Levels of Relationships among Variables</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">SpPOP: Package for Generation of Spatial
+Population under Different Levels of Relationships among Variables</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>****<br /> <em>The developed package can be used to generate a spatial
+population for different levels of relationships among the dependent and
+auxiliary variables along with spatially varying model parameters. A
+spatial layout is designed as a [0,k-1]x[0,k-1] square region on which
+observations are collected at (k x k) lattice points with a unit
+distance between any two neighbouring points along the horizontal and
+vertical axes. Regression coefficients of the spatially varying
+regression model are generated using both linear and non-linear function
+of locations. In total eight different types of population can be
+generated. Details of which are given below.</em></p>
+<p>****<br /></p>
+<div id="generation-of-simulated-spatial-population-based-on-spatially-varying-regression-model-where-the-model-parameters-are-generated-based-on-both-linear-and-non-linear-functions-of-latitudes-and-longitudes" class="section level3">
+<h3><strong>Generation of simulated spatial population based on
+spatially varying regression model where the model parameters are
+generated based on both linear and non-linear functions of latitudes and
+longitudes</strong></h3>
+<p>****<br /></p>
+<p><strong>Generation of spatial coordinates of locations</strong></p>
+<p><em>The size of the population is N= k<sup>2</sup>. The spatial
+coordinates of the locations of observations can be expressed by the
+following equations</em></p>
+<p><em>( Latitude<sub>i</sub>, Longitude<sub>i</sub> )= ( mod(i-1,k),
+[(i-1)/k] ), i= 1,…, k<sup>2</sup></em></p>
+<p><em>where, mod(i-1,k) is the remainder of (i-1) divided by k and
+[(i-1)/k] is the integer part of the number (i-1)/k </em></p>
+<p><strong>Generation of auxiliary variable from uniform
+distribution</strong></p>
+<p><em>Auxiliary variables has been generated independently from the
+uniform distribution i.e. U(0,1)</em></p>
+<p>X =runif(N,0,1)</p>
+<p><strong>Error term drawn independently from normal distribution
+i.e. N(0,1)</strong></p>
+<p>e =rnorm(N, mean=0, sd=1)</p>
+</div>
+<div id="for-the-function-sppop_linear1" class="section level3">
+<h3>For the function SpPOP_linear1</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and one explanatory variable
+(i.e. X). The auxiliary variable has been generated following U(0,1) and
+the regression coefficients are generated as linear function of
+latitudes and longitudes </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>=(Latitude<sub>i</sub>+Longitude<sub>i</sub>)/18</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub>/9)</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )*X<sub>i</sub> +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Generate an uniform two dimensional grid of lattice points </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>coords_grid<span class="ot">=</span><span class="fu">expand.grid</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>coords_grid<span class="ot">=</span><span class="fu">as.data.frame</span>(coords_grid)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(coords_grid)<span class="ot">=</span><span class="fu">cbind</span>(<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>coords_grid</span></code></pre></div>
+<pre><code>##    x y
+## 1  1 1
+## 2  2 1
+## 3  3 1
+## 4  4 1
+## 5  5 1
+## 6  1 2
+## 7  2 2
+## 8  3 2
+## 9  4 2
+## 10 5 2
+## 11 1 3
+## 12 2 3
+## 13 3 3
+## 14 4 3
+## 15 5 3
+## 16 1 4
+## 17 2 4
+## 18 3 4
+## 19 4 4
+## 20 5 4
+## 21 1 5
+## 22 2 5
+## 23 3 5
+## 24 4 5
+## 25 5 5</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coords_grid)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAXVBMVEUAAAAAADoAAGYAOjoAOpAAZrY6AAA6ADo6AGY6Ojo6OpA6kNtmAABmADpmZmZmtv+QOgCQZgCQ2/+2ZgC2/7a2///bkDrb2//b/9vb////tmb/25D//7b//9v///9l0IA6AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAFJ0lEQVR4nO3dD3ObNgBAcdq62Z94q1c2bcHG3/9jzgI7ca8WT/ggEOu9u+52V02Jf4chsxCpjjZYtfQ3sPYEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEgiYGqj5McwAdts+nfzan2T//MzRd7pfPHDfLsPmAwuYl/tu39HSXPzlfOmPcPMNmAzrTdEy3p6sy580cN9Ow2YD2Tx1Q8+Ob7PqtXTiQR9BAh208Rr4eL6frxHTlnoOOndGn76cLWcKn8KvY+083XwJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQbMCnZd+ktMV+5l0v6rRl1h8LnxV47yaMXwEFbwuFo+huGD4M5Arq6/Vn757BA0Wqmc4SRd8DuraP33xKjZYu6uGgT5C/qAICQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBI0HOmy7jU4ZNVXc8TMw3aN+Jh1O/21qm9O5+jRi//tLuXtWwajevHQLYyXvOAwDm76742b/SwQqdM9q3BL/7djuEodHvxGz/fdY5hEU793oX3aTOoTC5S9K3LN62CYvTW+FfkyTXDl86KvYFD3wz0Hv/HWXTiBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIGgmoNAtexyvPr6/NV25n0nHz+wP27hCPQT0oKsaGbW7bl0sLpsNAD3suhh3WZGvNy+hzJVVqD+CTtVfPYJudmE5bN03f7twXlJtd17F7qv0n4Pee7r5EggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEghaFMiPXIenK/dD+7ynAZe87JNezHDhsK/dwdbx0oEG9hq+TVfuOSh3Oq9i7zbdfC0G9GFaCGjcpJnjFhl25/BpJxVomnECrXHYncOnnVSgacYJtMZhdw6fdlKBphn3eECPlECQQJBAkECQQJBAkECQQJBAkECQQJBA0BxA+18TD8u9rt1V+HzvWBh4/vmP1YknFF/V336R+eT1vhmADtvU04Svanenlx34e43bZJssoaZioP5h2KOaHqhJP7H7qv6X2aY2T7/WPZcZb5noR2YAJR8EnW5yoKZ6zv828o6NLKCw+YuBwqh3V9cc56B8oDprZMhgPL15Ms5B9W95J76rFgVqcr7ZJuclxWceMFD/y87rUUJLAjWZ15PkQ/bfis/YzziC+i876kS0IFDW8dOPpPdYd3XKBRr4Zec3Wg4o5J8M8CWF8z0tWa983LV+MaCQ9Wp6mjxxPoLGzHZpKaD9U97xE1/161NneCgNiSe9j3GSPr8p+AJe575zss5B+bNd8n9WIYEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggaC1A8U7qbubpZdq7UDx5qmQefPhLK0d6Nh8/vuP0fsHJmz1QMd63OaTqVs/ED26ceZWD9Tu/hy/A2XCVg8UNv/l3eQ6U2sHir+Z845NTNO1dqD+PukFT9NrB1o8gSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBoP8BDeRYlwplo2IAAAAASUVORK5CYII=" /><!-- --></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>coords_grid<span class="ot">=</span><span class="fu">expand.grid</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>coords_grid<span class="ot">=</span><span class="fu">as.data.frame</span>(coords_grid)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(coords_grid)<span class="ot">=</span><span class="fu">cbind</span>(<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>coords_grid</span></code></pre></div>
+<pre><code>##    x y
+## 1  1 1
+## 2  2 1
+## 3  3 1
+## 4  4 1
+## 5  5 1
+## 6  1 2
+## 7  2 2
+## 8  3 2
+## 9  4 2
+## 10 5 2
+## 11 1 3
+## 12 2 3
+## 13 3 3
+## 14 4 3
+## 15 5 3
+## 16 1 4
+## 17 2 4
+## 18 3 4
+## 19 4 4
+## 20 5 4
+## 21 1 5
+## 22 2 5
+## 23 3 5
+## 24 4 5
+## 25 5 5</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>N<span class="ot">&lt;-</span><span class="fu">nrow</span>(coords_grid)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>N</span></code></pre></div>
+<pre><code>## [1] 25</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>k<span class="ot">&lt;-</span><span class="fu">sqrt</span>(<span class="fu">nrow</span>(coords_grid))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>k</span></code></pre></div>
+<pre><code>## [1] 5</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sp_linear1<span class="ot">&lt;-</span><span class="fu">SpPOP_linear1</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sp_linear1</span></code></pre></div>
+<pre><code>##             Y           X latitude longitude         B0        B1
+## 1  -0.6385162 0.008670922        0         0 0.00000000 0.0000000
+## 2  -0.3657937 0.555195503        1         0 0.05555556 0.1111111
+## 3  -0.1238916 0.987145639        2         0 0.11111111 0.2222222
+## 4   0.9924932 0.796818988        3         0 0.16666667 0.3333333
+## 5   1.1909612 0.895889906        4         0 0.22222222 0.4444444
+## 6  -2.0366106 0.272928117        0         1 0.05555556 0.0000000
+## 7   0.2324620 0.460574525        1         1 0.11111111 0.1111111
+## 8  -0.4950643 0.301175795        2         1 0.16666667 0.2222222
+## 9  -0.6262052 0.433577891        3         1 0.22222222 0.3333333
+## 10  0.3010648 0.800071618        4         1 0.27777778 0.4444444
+## 11  1.3569661 0.870431042        0         2 0.11111111 0.0000000
+## 12  0.6128895 0.778206456        1         2 0.16666667 0.1111111
+## 13 -0.5661738 0.957810637        2         2 0.22222222 0.2222222
+## 14 -1.4728098 0.739340476        3         2 0.27777778 0.3333333
+## 15 -0.2885802 0.157180382        4         2 0.33333333 0.4444444
+## 16  1.1159875 0.827919451        0         3 0.16666667 0.0000000
+## 17 -0.9024278 0.135645042        1         3 0.22222222 0.1111111
+## 18 -0.9148966 0.440048936        2         3 0.27777778 0.2222222
+## 19  0.8294268 0.954400906        3         3 0.33333333 0.3333333
+## 20  0.7075803 0.265156079        4         3 0.38888889 0.4444444
+## 21 -0.2961651 0.134147050        0         4 0.22222222 0.0000000
+## 22 -0.1983796 0.145500501        1         4 0.27777778 0.1111111
+## 23  0.0149270 0.565660454        2         4 0.33333333 0.2222222
+## 24  1.6122422 0.772888334        3         4 0.38888889 0.3333333
+## 25  0.3779370 0.209692298        4         4 0.44444444 0.4444444</code></pre>
+</div>
+<div id="for-the-function-sppop_linear2" class="section level3">
+<h3>For the function SpPOP_linear2</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and three explanatory
+variables (i.e. X1,X2 and X3). The auxiliary variables have been
+generated independently from the uniform distribution U(0,1) and the
+regression coefficients are generated as linear function of latitudes
+and longitudes </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>=(Latitude<sub>i</sub>+Longitude<sub>i</sub>)/6</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub>/3)</p>
+<p>B<sub>2</sub>=(Longitude<sub>i</sub>/3)</p>
+<p>B<sub>3</sub>=(2*Longitude<sub>i</sub>)</p>
+<p><strong>Generation of auxiliary variables independently from the
+uniform distribution</strong></p>
+<p>X<sub>1</sub> =runif(N,0,1), X<sub>2</sub> =runif(N,0,1) and
+X<sub>3</sub> =runif(N,0,1)</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X<sub>1i</sub> +
+B<sub>2</sub>(Latitude<sub>i</sub>,Longitude<sub>i</sub>)*
+X<sub>2i</sub> + B<sub>3</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )*X<sub>3i</sub> +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>sp_linear2<span class="ot">&lt;-</span><span class="fu">SpPOP_linear2</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>sp_linear2</span></code></pre></div>
+<pre><code>##              Y        X1          X2         X3 latitude longitude        B0
+## 1  -1.82858131 0.5944992 0.311818000 0.76457523        0         0 0.0000000
+## 2   2.15760008 0.9465491 0.443732792 0.24063934        1         0 0.1666667
+## 3   1.89666619 0.8943838 0.883625589 0.63822624        2         0 0.3333333
+## 4   0.09174716 0.4318616 0.069160961 0.62195066        3         0 0.5000000
+## 5   2.38884324 0.4867799 0.298661276 0.38910061        4         0 0.6666667
+## 6   2.11112629 0.4818445 0.978487346 0.25144887        0         1 0.1666667
+## 7   1.56654299 0.8167164 0.892389085 0.68463087        1         1 0.3333333
+## 8   1.43788016 0.4032495 0.728726941 0.23328465        2         1 0.5000000
+## 9   3.90135865 0.2144529 0.504790984 0.67280208        3         1 0.6666667
+## 10  3.05971600 0.5494753 0.350181414 0.53343253        4         1 0.8333333
+## 11  0.15723008 0.6243017 0.376658351 0.06569530        0         2 0.3333333
+## 12  5.74029141 0.2262922 0.276039757 0.80657806        1         2 0.5000000
+## 13  2.32033140 0.9478098 0.046970449 0.09764455        2         2 0.6666667
+## 14  2.41451164 0.1845203 0.005028286 0.42252495        3         2 0.8333333
+## 15  2.24041893 0.9749800 0.082197745 0.06720287        4         2 1.0000000
+## 16  4.47308182 0.9227784 0.082659904 0.69747700        0         3 0.5000000
+## 17  3.66419513 0.2539389 0.615839009 0.35621910        1         3 0.6666667
+## 18  4.66441275 0.7353120 0.057101715 0.31793006        2         3 0.8333333
+## 19  3.01230682 0.5251119 0.670578606 0.40898542        3         3 1.0000000
+## 20  4.47903237 0.9500805 0.986019709 0.02338269        4         3 1.1666667
+## 21  4.66831813 0.4578746 0.379690734 0.65841758        0         4 0.6666667
+## 22  7.83409460 0.6541902 0.785046917 0.91688492        1         4 0.8333333
+## 23 10.27319050 0.3367476 0.348909366 0.99233891        2         4 1.0000000
+## 24  7.68753889 0.3527206 0.820356217 0.76678176        3         4 1.1666667
+## 25  8.14228855 0.6702242 0.970578888 0.71428470        4         4 1.3333333
+##           B1        B2 B3
+## 1  0.0000000 0.0000000  0
+## 2  0.3333333 0.0000000  0
+## 3  0.6666667 0.0000000  0
+## 4  1.0000000 0.0000000  0
+## 5  1.3333333 0.0000000  0
+## 6  0.0000000 0.3333333  2
+## 7  0.3333333 0.3333333  2
+## 8  0.6666667 0.3333333  2
+## 9  1.0000000 0.3333333  2
+## 10 1.3333333 0.3333333  2
+## 11 0.0000000 0.6666667  4
+## 12 0.3333333 0.6666667  4
+## 13 0.6666667 0.6666667  4
+## 14 1.0000000 0.6666667  4
+## 15 1.3333333 0.6666667  4
+## 16 0.0000000 1.0000000  6
+## 17 0.3333333 1.0000000  6
+## 18 0.6666667 1.0000000  6
+## 19 1.0000000 1.0000000  6
+## 20 1.3333333 1.0000000  6
+## 21 0.0000000 1.3333333  8
+## 22 0.3333333 1.3333333  8
+## 23 0.6666667 1.3333333  8
+## 24 1.0000000 1.3333333  8
+## 25 1.3333333 1.3333333  8</code></pre>
+</div>
+<div id="for-the-function-sppop_linear3" class="section level3">
+<h3>For the function SpPOP_linear3</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and one explanatory variable
+(i.e. X). The auxiliary variable has been generated from the uniform
+distribution U(0,2) and the regression coefficients are generated as
+linear function of locations </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>=(2*(Latitude<sub>i</sub>+Longitude<sub>i</sub>))/6</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub>/3)</p>
+<p><strong>Generation of auxiliary variable from the uniform
+distribution</strong></p>
+<p>X =runif(N,0,2),</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X<sub>i</sub> +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>sp_linear3<span class="ot">&lt;-</span><span class="fu">SpPOP_linear3</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>sp_linear3</span></code></pre></div>
+<pre><code>##              Y         X latitude longitude        B0        B1
+## 1  -0.71849330 1.8789632        0         0 0.0000000 0.0000000
+## 2  -0.04776410 1.8544099        1         0 0.3333333 0.3333333
+## 3   2.00033861 1.9035184        2         0 0.6666667 0.6666667
+## 4   1.53753266 1.7442356        3         0 1.0000000 1.0000000
+## 5   1.71374611 0.6079337        4         0 1.3333333 1.3333333
+## 6   1.93900661 0.1530089        0         1 0.1666667 0.0000000
+## 7   1.41147766 1.8450406        1         1 0.5000000 0.3333333
+## 8   2.34690898 1.8592073        2         1 0.8333333 0.6666667
+## 9   2.96400402 0.4472633        3         1 1.1666667 1.0000000
+## 10  2.04576275 1.1197784        4         1 1.5000000 1.3333333
+## 11  0.78821032 0.7714012        0         2 0.3333333 0.0000000
+## 12 -0.32017246 1.8813707        1         2 0.6666667 0.3333333
+## 13  1.54828369 1.4999020        2         2 1.0000000 0.6666667
+## 14  2.27817515 1.4539635        3         2 1.3333333 1.0000000
+## 15  4.23432658 1.4461893        4         2 1.6666667 1.3333333
+## 16  1.20254710 1.5870078        0         3 0.5000000 0.0000000
+## 17  2.27092989 0.5242652        1         3 0.8333333 0.3333333
+## 18  2.86804285 1.9928006        2         3 1.1666667 0.6666667
+## 19  1.89067803 0.1305419        3         3 1.5000000 1.0000000
+## 20  0.08090745 0.3207972        4         3 1.8333333 1.3333333
+## 21 -0.60789192 0.2081725        0         4 0.6666667 0.0000000
+## 22  0.16001054 0.1811717        1         4 1.0000000 0.3333333
+## 23  0.53142405 0.4343316        2         4 1.3333333 0.6666667
+## 24  2.70059083 1.8530458        3         4 1.6666667 1.0000000
+## 25  3.97953774 1.7701464        4         4 2.0000000 1.3333333</code></pre>
+</div>
+<div id="for-the-function-sppop_linear4" class="section level3">
+<h3>For the function SpPOP_linear4</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and one explanatory variable
+(i.e. X). The auxiliary variable has been generated from the uniform
+distribution U(0,2) and the regression coefficients are generated as
+linear function of locations. In this function, we have used non-linear
+model for generating the response variable i.e. the relationship between
+the response and auxiliary variable is non-linear in nature. </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>=(2*(Latitude<sub>i</sub>+Longitude<sub>i</sub>))/6</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub>/3)</p>
+<p><strong>Generation of auxiliary variable from the uniform
+distribution</strong></p>
+<p>X =runif(N,0,2),</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong> <strong>The relation between Y and X is
+non-linear in the model</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + exp[B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X<sub>i</sub>] +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sp_linear4<span class="ot">&lt;-</span><span class="fu">SpPOP_linear4</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>sp_linear4</span></code></pre></div>
+<pre><code>##              Y         X latitude longitude        B0        B1
+## 1   1.63022656 0.3084330        0         0 0.0000000 0.0000000
+## 2   2.27253969 0.6275131        1         0 0.3333333 0.3333333
+## 3   3.09709199 1.4976805        2         0 0.6666667 0.6666667
+## 4   1.92356590 0.6874736        3         0 1.0000000 1.0000000
+## 5   3.60919324 0.7524658        4         0 1.3333333 1.3333333
+## 6  -0.01102871 0.7088710        0         1 0.1666667 0.0000000
+## 7   2.63170364 0.8592169        1         1 0.5000000 0.3333333
+## 8   5.20839998 1.8881164        2         1 0.8333333 0.6666667
+## 9   6.84022703 1.4723306        3         1 1.1666667 1.0000000
+## 10  1.21419820 0.4023375        4         1 1.5000000 1.3333333
+## 11  1.97560689 0.9812003        0         2 0.3333333 0.0000000
+## 12  2.24961790 1.0121873        1         2 0.6666667 0.3333333
+## 13  1.57966116 0.9306789        2         2 1.0000000 0.6666667
+## 14  3.99729274 1.1797239        3         2 1.3333333 1.0000000
+## 15  2.43677286 0.1351487        4         2 1.6666667 1.3333333
+## 16  0.61539390 1.6809876        0         3 0.5000000 0.0000000
+## 17  3.17996103 0.0224011        1         3 0.8333333 0.3333333
+## 18  4.87331724 1.9785420        2         3 1.1666667 0.6666667
+## 19  6.01895268 1.6893461        3         3 1.5000000 1.0000000
+## 20  6.13318725 1.0783261        4         3 1.8333333 1.3333333
+## 21  0.46171371 0.8753324        0         4 0.6666667 0.0000000
+## 22  1.40784204 1.1912744        1         4 1.0000000 0.3333333
+## 23  2.76548131 1.5661801        2         4 1.3333333 0.6666667
+## 24  2.23214454 0.4521896        3         4 1.6666667 1.0000000
+## 25 10.94825762 1.7000948        4         4 2.0000000 1.3333333</code></pre>
+</div>
+<div id="for-the-function-sppop_linear5" class="section level3">
+<h3>For the function SpPOP_linear5</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and two explanatory variables
+(i.e. X1 and X2). The auxiliary variables are drawn independently from
+the uniform distribution U(0,2) and normal distribution N(1,1) and the
+regression coefficients are generated as linear function of locations.
+In this function, we have used non-linear model for generating the
+response variable i.e. the relationship between the response and
+auxiliary variables are non-linear in nature. </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>=(Latitude<sub>i</sub>+Longitude<sub>i</sub>)/6</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub>/3)</p>
+<p>B<sub>2</sub>=(Longitude<sub>i</sub>/3)</p>
+<p><strong>Generation of auxiliary variables independently from the
+uniform and normal distribution</strong></p>
+<p>X1 =runif(N,0,2) and X2 =rnorm(N,1,1)</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + exp[(B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )*
+X1<sub>i</sub>)+(B<sub>2</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X2<sub>i</sub>)] +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>sp_linear5<span class="ot">&lt;-</span><span class="fu">SpPOP_linear5</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>sp_linear5</span></code></pre></div>
+<pre><code>##              Y        X1          X2 latitude longitude        B0        B1
+## 1   0.90774682 1.1080677  1.52696062        0         0 0.0000000 0.0000000
+## 2   1.70331851 1.8936248  1.68113877        1         0 0.1666667 0.3333333
+## 3   0.08851388 0.1805360 -0.03672761        2         0 0.3333333 0.6666667
+## 4   0.47529815 0.2032689  1.78728039        3         0 0.5000000 1.0000000
+## 5   7.09171840 1.3640243 -0.15527361        4         0 0.6666667 1.3333333
+## 6   0.38831157 1.1744001  0.95787190        0         1 0.1666667 0.0000000
+## 7   1.00858864 0.4235612  1.79129414        1         1 0.3333333 0.3333333
+## 8   4.02695986 0.7081248  1.49971810        2         1 0.5000000 0.6666667
+## 9   1.50682081 0.1290912  0.54455424        3         1 0.6666667 1.0000000
+## 10  6.62702025 0.8683968  1.98848239        4         1 0.8333333 1.3333333
+## 11  1.21260586 1.6719326  0.60883034        0         2 0.3333333 0.0000000
+## 12  3.21561787 0.5113690  0.91528869        1         2 0.5000000 0.3333333
+## 13  3.64738730 1.1225266  0.33997247        2         2 0.6666667 0.6666667
+## 14  2.58721852 0.1728036  0.46247247        3         2 0.8333333 1.0000000
+## 15  2.12968904 0.2192020 -0.18311113        4         2 1.0000000 1.3333333
+## 16  4.36459759 1.2268703  1.24627612        0         3 0.5000000 0.0000000
+## 17  9.35188471 1.8713079  1.52332969        1         3 0.6666667 0.3333333
+## 18  2.13055974 0.1486552  0.66468157        2         3 0.8333333 0.6666667
+## 19  3.04084144 1.5372691 -0.79163116        3         3 1.0000000 1.0000000
+## 20  3.41228055 0.3638633  0.29967309        4         3 1.1666667 1.3333333
+## 21  2.09439697 1.0949643  0.76750081        0         4 0.6666667 0.0000000
+## 22  0.94136046 0.3418208  0.49284326        1         4 0.8333333 0.3333333
+## 23 71.03603286 1.7925546  2.28157204        2         4 1.0000000 0.6666667
+## 24  6.62100931 0.1177230  1.20395688        3         4 1.1666667 1.0000000
+## 25  9.77152049 0.1903301  1.53282444        4         4 1.3333333 1.3333333
+##           B2
+## 1  0.0000000
+## 2  0.0000000
+## 3  0.0000000
+## 4  0.0000000
+## 5  0.0000000
+## 6  0.3333333
+## 7  0.3333333
+## 8  0.3333333
+## 9  0.3333333
+## 10 0.3333333
+## 11 0.6666667
+## 12 0.6666667
+## 13 0.6666667
+## 14 0.6666667
+## 15 0.6666667
+## 16 1.0000000
+## 17 1.0000000
+## 18 1.0000000
+## 19 1.0000000
+## 20 1.0000000
+## 21 1.3333333
+## 22 1.3333333
+## 23 1.3333333
+## 24 1.3333333
+## 25 1.3333333</code></pre>
+</div>
+<div id="for-the-function-sppop_nonlinear1" class="section level3">
+<h3>For the function SpPOP_nonlinear1</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and one explanatory variable
+(i.e. X). The auxiliary variable has been generated from the uniform
+distribution U(0,1) and the regression coefficients are generated as
+non-linear function of locations. </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+non-linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>= 2* sin((pi * Latitude<sub>i</sub>)/6)</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub><sup>2</sup>+Longitude<sub>i</sub><sup>2</sup>)/18</p>
+<p><strong>Generation of auxiliary variable from the uniform
+distribution</strong></p>
+<p>X =runif(N,0,1),</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X<sub>i</sub> +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>sp_nonlinear1<span class="ot">&lt;-</span><span class="fu">SpPOP_nonlinear1</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>sp_nonlinear1</span></code></pre></div>
+<pre><code>##              Y           X latitude longitude       B0         B1
+## 1  -0.12962621 0.741273956        0         0 0.000000 0.00000000
+## 2   0.86173341 0.969768110        1         0 1.000000 0.05555556
+## 3   0.88873585 0.202640370        2         0 1.732051 0.22222222
+## 4   3.45582866 0.467743181        3         0 2.000000 0.50000000
+## 5  -0.19538739 0.124330212        4         0 1.732051 0.88888889
+## 6  -0.93423003 0.641858309        0         1 0.000000 0.05555556
+## 7   0.98241639 0.641460546        1         1 1.000000 0.11111111
+## 8   3.33614187 0.695222820        2         1 1.732051 0.27777778
+## 9   1.75314964 0.685712544        3         1 2.000000 0.55555556
+## 10  3.00499945 0.884925370        4         1 1.732051 0.94444444
+## 11 -1.03611254 0.116913621        0         2 0.000000 0.22222222
+## 12  1.69564386 0.988615921        1         2 1.000000 0.27777778
+## 13  3.31021212 0.184704783        2         2 1.732051 0.44444444
+## 14  1.84340945 0.008165184        3         2 2.000000 0.72222222
+## 15  1.85492790 0.811728082        4         2 1.732051 1.11111111
+## 16  0.47787864 0.740558583        0         3 0.000000 0.50000000
+## 17  1.82490518 0.382840886        1         3 1.000000 0.55555556
+## 18  1.93683394 0.600314991        2         3 1.732051 0.72222222
+## 19  3.21588692 0.067088166        3         3 2.000000 1.00000000
+## 20  2.06960087 0.195909230        4         3 1.732051 1.38888889
+## 21 -0.04528709 0.592952824        0         4 0.000000 0.88888889
+## 22  2.42877854 0.478905111        1         4 1.000000 0.94444444
+## 23  2.36525657 0.675122472        2         4 1.732051 1.11111111
+## 24  1.33254549 0.207335375        3         4 2.000000 1.38888889
+## 25  0.98849700 0.070341430        4         4 1.732051 1.77777778</code></pre>
+</div>
+<div id="for-the-function-sppop_nonlinear2" class="section level3">
+<h3>For the function SpPOP_nonlinear2</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and one explanatory variable
+(i.e. X). The auxiliary variable has been generated from the uniform
+distribution U(0,1) and the regression coefficients are generated as
+non-linear function of locations. </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+non-linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>= 2 * sin(pi *
+(Latitude<sub>i</sub>+Longitude<sub>i</sub>)/6)</p>
+<p>B<sub>1</sub>=(1/2)*
+exp[Latitude<sub>i</sub>+Longitude<sub>i</sub>]</p>
+<p><strong>Generation of auxiliary variable from the uniform
+distribution</strong></p>
+<p>X =runif(N,0,1),</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X<sub>i</sub> +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>sp_nonlinear2<span class="ot">&lt;-</span><span class="fu">SpPOP_nonlinear2</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>sp_nonlinear2</span></code></pre></div>
+<pre><code>##              Y            X latitude longitude            B0          B1
+## 1   -0.2623128 0.2136018802        0         0  0.000000e+00    0.500000
+## 2    3.6063024 0.0347995891        1         0  1.000000e+00    1.359141
+## 3    2.1258446 0.0808213637        2         0  1.732051e+00    3.694528
+## 4    5.6889865 0.3585180207        3         0  2.000000e+00   10.042768
+## 5    5.8825229 0.1180463440        4         0  1.732051e+00   27.299075
+## 6    2.3612643 0.1174956451        0         1  1.000000e+00    1.359141
+## 7    3.9155667 0.2803148762        1         1  1.732051e+00    3.694528
+## 8    4.6119542 0.1854201185        2         1  2.000000e+00   10.042768
+## 9    9.6893354 0.3499171450        3         1  1.732051e+00   27.299075
+## 10  61.5363914 0.8047664363        4         1  1.000000e+00   74.206580
+## 11   2.5665627 0.1674575754        0         2  1.732051e+00    3.694528
+## 12   2.6452148 0.0795166050        1         2  2.000000e+00   10.042768
+## 13  13.0161041 0.4819087794        2         2  1.732051e+00   27.299075
+## 14  58.3441234 0.7615233329        3         2  1.000000e+00   74.206580
+## 15  -0.1757544 0.0002595691        4         2  2.449213e-16  201.714397
+## 16   5.6183821 0.2604585702        0         3  2.000000e+00   10.042768
+## 17  22.5556072 0.7594652874        1         3  1.732051e+00   27.299075
+## 18  19.3824061 0.2626759058        2         3  1.000000e+00   74.206580
+## 19  11.9894343 0.0579528441        3         3  2.449213e-16  201.714397
+## 20 498.8457553 0.9120622594        4         3 -1.000000e+00  548.316579
+## 21   6.6865163 0.1865091843        0         4  1.732051e+00   27.299075
+## 22   5.1039199 0.0536370645        1         4  1.000000e+00   74.206580
+## 23 108.2835400 0.5439063066        2         4  2.449213e-16  201.714397
+## 24 112.3453052 0.2068959472        3         4 -1.000000e+00  548.316579
+## 25 968.7352693 0.6514479788        4         4 -1.732051e+00 1490.478994</code></pre>
+</div>
+<div id="for-the-function-sppop_nonlinear3" class="section level3">
+<h3>For the function SpPOP_nonlinear3</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and three explanatory
+variables (i.e. X1,X2 and X3). The auxiliary variables have been
+generated independently from the uniform distribution U(0,1) and the
+regression coefficients are generated as non-linear function of
+latitudes and longitudes </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+non-linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>= 2* sin((pi * Latitude<sub>i</sub>)/6)</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub><sup>2</sup>+Longitude<sub>i</sub><sup>2</sup>)/18</p>
+<p>B<sub>2</sub>= 4 * sin(pi *
+(Latitude<sub>i</sub>+Longitude<sub>i</sub>)/6)</p>
+<p>B<sub>3</sub>=(1/2)*
+exp[Latitude<sub>i</sub>+Longitude<sub>i</sub>]</p>
+<p><strong>Generation of auxiliary variables independently from the
+uniform distribution</strong></p>
+<p>X<sub>1</sub> =runif(N,0,1), X<sub>2</sub> =runif(N,0,1) and
+X<sub>3</sub> =runif(N,0,1)</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X<sub>1i</sub> +
+B<sub>2</sub>(Latitude<sub>i</sub>,Longitude<sub>i</sub>)*
+X<sub>2i</sub> + B<sub>3</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )*X<sub>3i</sub> +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>sp_nonlinear3<span class="ot">&lt;-</span><span class="fu">SpPOP_nonlinear3</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>sp_nonlinear3</span></code></pre></div>
+<pre><code>##               Y         X1          X2        X3 latitude longitude       B0
+## 1    -0.9182138 0.33320843 0.353142677 0.6147018        0         0 0.000000
+## 2     2.0599607 0.76750836 0.664317156 0.4671899        1         0 1.000000
+## 3     5.9395778 0.34249101 0.199650929 0.5837977        2         0 1.732051
+## 4    14.8853313 0.93272172 0.652078782 0.9594945        3         0 2.000000
+## 5    11.4938456 0.94825165 0.104067099 0.3395415        4         0 1.732051
+## 6     1.3777097 0.58647576 0.813394757 0.1774095        0         1 0.000000
+## 7     4.6824405 0.88651445 0.369619058 0.1307069        1         1 1.000000
+## 8     7.6032416 0.83138303 0.446163624 0.5089649        2         1 1.732051
+## 9    19.8955613 0.57165250 0.499292862 0.6409255        3         1 2.000000
+## 10   44.4453160 0.63847773 0.370049337 0.5853078        4         1 1.732051
+## 11    4.2456951 0.76315328 0.474677670 0.3176453        0         2 0.000000
+## 12    9.1865769 0.19094042 0.853151965 0.6166145        1         2 1.000000
+## 13   15.0977615 0.08367446 0.002866959 0.5002576        2         2 1.732051
+## 14   40.6172229 0.95984891 0.339944619 0.4849133        3         2 2.000000
+## 15   26.5007960 0.87298681 0.799043830 0.1205405        4         2 1.732051
+## 16    4.4745776 0.51734989 0.843996886 0.1486959        0         3 0.000000
+## 17    8.6581817 0.42473847 0.470353034 0.1285846        1         3 1.000000
+## 18   74.0552837 0.45822004 0.732084861 0.9472868        2         3 1.732051
+## 19  145.1338644 0.70347839 0.590421190 0.7063045        3         3 2.000000
+## 20  367.3100693 0.09848853 0.660449098 0.6680832        4         3 1.732051
+## 21   22.9646200 0.95622267 0.489628288 0.7994466        0         4 0.000000
+## 22   22.6661120 0.85342770 0.816861999 0.2449077        1         4 1.000000
+## 23  132.3450919 0.22334179 0.891990443 0.6520130        2         4 1.732051
+## 24  514.3874813 0.06718166 0.053868327 0.9328562        3         4 2.000000
+## 25 1211.6669216 0.62739128 0.917154031 0.8130110        4         4 1.732051
+##            B1            B2          B3
+## 1  0.00000000  0.000000e+00    0.500000
+## 2  0.05555556  2.000000e+00    1.359141
+## 3  0.22222222  3.464102e+00    3.694528
+## 4  0.50000000  4.000000e+00   10.042768
+## 5  0.88888889  3.464102e+00   27.299075
+## 6  0.05555556  2.000000e+00    1.359141
+## 7  0.11111111  3.464102e+00    3.694528
+## 8  0.27777778  4.000000e+00   10.042768
+## 9  0.55555556  3.464102e+00   27.299075
+## 10 0.94444444  2.000000e+00   74.206580
+## 11 0.22222222  3.464102e+00    3.694528
+## 12 0.27777778  4.000000e+00   10.042768
+## 13 0.44444444  3.464102e+00   27.299075
+## 14 0.72222222  2.000000e+00   74.206580
+## 15 1.11111111  4.898425e-16  201.714397
+## 16 0.50000000  4.000000e+00   10.042768
+## 17 0.55555556  3.464102e+00   27.299075
+## 18 0.72222222  2.000000e+00   74.206580
+## 19 1.00000000  4.898425e-16  201.714397
+## 20 1.38888889 -2.000000e+00  548.316579
+## 21 0.88888889  3.464102e+00   27.299075
+## 22 0.94444444  2.000000e+00   74.206580
+## 23 1.11111111  4.898425e-16  201.714397
+## 24 1.38888889 -2.000000e+00  548.316579
+## 25 1.77777778 -3.464102e+00 1490.478994</code></pre>
+</div>
+<div id="for-the-function-sppop_nonlinear4" class="section level3">
+<h3>For the function SpPOP_nonlinear4</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and one explanatory variable
+(i.e. X). The auxiliary variable has been generated from the uniform
+distribution U(0,2) and the regression coefficients are generated as
+non-linear function of locations. In this function, we have used
+non-linear model for generating the response variable i.e. the
+relationship between the response and auxiliary variable is non-linear
+in nature. </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+non-linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>= 2* sin((pi * Latitude<sub>i</sub>)/6)</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub><sup>2</sup>+Longitude<sub>i</sub><sup>2</sup>)/18</p>
+<p><strong>Generation of auxiliary variable from the uniform
+distribution</strong></p>
+<p>X =runif(N,0,2),</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong> <strong>The relation between Y and X is
+non-linear in the model</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + exp[B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X<sub>i</sub>] +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>sp_nonlinear4<span class="ot">&lt;-</span><span class="fu">SpPOP_nonlinear4</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>sp_nonlinear4</span></code></pre></div>
+<pre><code>##             Y         X latitude longitude       B0         B1
+## 1  -0.3696235 1.4409775        0         0 0.000000 0.00000000
+## 2   0.3605322 0.5804171        1         0 1.000000 0.05555556
+## 3   3.5153521 0.8417020        2         0 1.732051 0.22222222
+## 4   3.7441876 1.0005980        3         0 2.000000 0.50000000
+## 5   3.7884874 0.5496977        4         0 1.732051 0.88888889
+## 6   1.5157027 0.8237628        0         1 0.000000 0.05555556
+## 7   2.2305095 1.5783105        1         1 1.000000 0.11111111
+## 8   3.0830630 1.2933834        2         1 1.732051 0.27777778
+## 9   4.5098572 1.8153169        3         1 2.000000 0.55555556
+## 10  1.9304841 0.2982768        4         1 1.732051 0.94444444
+## 11  0.1901395 1.4421258        0         2 0.000000 0.22222222
+## 12  2.2915563 1.5851315        1         2 1.000000 0.27777778
+## 13  4.6069955 1.8556445        2         2 1.732051 0.44444444
+## 14  1.3902122 0.5467772        3         2 2.000000 0.72222222
+## 15  8.4926218 1.6470423        4         2 1.732051 1.11111111
+## 16  0.1134475 0.9620176        0         3 0.000000 0.50000000
+## 17  4.5185826 0.1337762        1         3 1.000000 0.55555556
+## 18  4.7197435 1.9792287        2         3 1.732051 0.72222222
+## 19  6.0081672 0.7038567        3         3 2.000000 1.00000000
+## 20  2.8899071 0.6359357        4         3 1.732051 1.38888889
+## 21  6.8000526 1.9671486        0         4 0.000000 0.88888889
+## 22  2.6481501 0.7462832        1         4 1.000000 0.94444444
+## 23  4.7645310 1.0055878        2         4 1.732051 1.11111111
+## 24  6.2816722 0.9383703        3         4 2.000000 1.38888889
+## 25  3.7243283 0.4797880        4         4 1.732051 1.77777778</code></pre>
+</div>
+<div id="for-the-function-sppop_nonlinear5" class="section level3">
+<h3>For the function SpPOP_nonlinear5</h3>
+<p><em>The developed function returns a spatial population consist of
+simulated response variable (i.e. Y) along with their spatial
+coordinates,spatially varying coefficients and two explanatory variables
+(i.e. X1 and X2). The auxiliary variables are drawn independently from
+the uniform distribution U(0,2) and normal distribution N(1,1) and the
+regression coefficients are generated as non-linear function of
+locations. In this function, we have used non-linear model for
+generating the response variable i.e. the relationship between the
+response and auxiliary variable is non-linear in nature. </em></p>
+<p><strong>Generation of spatially varying regression coefficients as
+non-linear function of latitudes and longitudes</strong></p>
+<p>B<sub>0</sub>= 2* sin((pi * Latitude<sub>i</sub>)/6)</p>
+<p>B<sub>1</sub>=(Latitude<sub>i</sub><sup>2</sup>+Longitude<sub>i</sub><sup>2</sup>)/18</p>
+<p>B<sub>2</sub>= 4 * sin(pi *
+(Latitude<sub>i</sub>+Longitude<sub>i</sub>)/6)</p>
+<p><strong>Generation of auxiliary variable from the uniform and normal
+distribution</strong></p>
+<p>X1 =runif(N,0,2) and X2 =rnorm(N,1,1)</p>
+<p><strong>Spatially varying regression model for generating the
+response variable</strong> <strong>The relation between Y and X’s is
+non-linear in the model</strong></p>
+<p>Y<sub>i</sub> = B<sub>0</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> ) + exp[(B<sub>1</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )*
+X1<sub>i</sub>)+(B<sub>2</sub>(
+Latitude<sub>i</sub>,Longitude<sub>i</sub> )* X2<sub>i</sub>)] +
+e<sub>i</sub> ; i= 1,…, N</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examples: Simulated population along with spatial coordinates and spatially varying model parameters</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpPOP)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>sp_nonlinear5<span class="ot">&lt;-</span><span class="fu">SpPOP_nonlinear5</span>(<span class="dv">25</span>,<span class="dv">5</span>,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>sp_nonlinear5</span></code></pre></div>
+<pre><code>##               Y         X1         X2 latitude longitude       B0         B1
+## 1  8.227128e-02 1.18429871  0.9075744        0         0 0.000000 0.00000000
+## 2  4.068243e+00 0.97126260  0.6751864        1         0 1.000000 0.05555556
+## 3  2.119790e+00 1.98198479 -0.2424008        2         0 1.732051 0.22222222
+## 4  2.416104e+00 0.08431764 -0.8172399        3         0 2.000000 0.50000000
+## 5  9.475765e+00 0.88648261  0.3306336        4         0 1.732051 0.88888889
+## 6  2.564479e+01 0.79968165  1.6028736        0         1 0.000000 0.05555556
+## 7  9.294188e+01 1.01014365  1.2733994        1         1 1.000000 0.11111111
+## 8  1.305297e+00 0.79246110 -0.5043042        2         1 1.732051 0.27777778
+## 9  1.302245e+00 1.19535064 -0.8388222        3         1 2.000000 0.55555556
+## 10 3.585096e+00 0.85012206 -0.4133791        4         1 1.732051 0.94444444
+## 11 7.991012e+02 0.63664388  1.8888545        0         2 0.000000 0.22222222
+## 12 2.634243e+01 1.57577768  0.7058088        1         2 1.000000 0.27777778
+## 13 2.282557e+00 0.65062688 -0.6047667        2         2 1.732051 0.44444444
+## 14 6.502995e+00 0.05448695  0.5906315        3         2 2.000000 0.72222222
+## 15 6.448941e+00 1.26281235  2.3175286        4         2 1.732051 1.11111111
+## 16 2.854499e+05 0.59050570  3.0666421        0         3 0.000000 0.50000000
+## 17 1.725124e+03 1.87665493  1.8503290        1         3 1.000000 0.55555556
+## 18 1.612427e+02 0.99627158  2.1773306        2         3 1.732051 0.72222222
+## 19 3.458355e+00 0.67306760  0.3495986        3         3 2.000000 1.00000000
+## 20 2.481131e+00 0.25112831  1.4154481        4         3 1.732051 1.38888889
+## 21 9.046575e+03 1.28200224  2.3009003        0         4 0.000000 0.88888889
+## 22 1.142145e+01 0.89027777  0.7992260        1         4 1.000000 0.94444444
+## 23 1.056977e+01 1.77225611  1.5967825        2         4 1.732051 1.11111111
+## 24 9.096007e-01 0.01240777  2.1065627        3         4 2.000000 1.38888889
+## 25 1.958584e+01 0.57993075 -0.5319461        4         4 1.732051 1.77777778
+##               B2
+## 1   0.000000e+00
+## 2   2.000000e+00
+## 3   3.464102e+00
+## 4   4.000000e+00
+## 5   3.464102e+00
+## 6   2.000000e+00
+## 7   3.464102e+00
+## 8   4.000000e+00
+## 9   3.464102e+00
+## 10  2.000000e+00
+## 11  3.464102e+00
+## 12  4.000000e+00
+## 13  3.464102e+00
+## 14  2.000000e+00
+## 15  4.898425e-16
+## 16  4.000000e+00
+## 17  3.464102e+00
+## 18  2.000000e+00
+## 19  4.898425e-16
+## 20 -2.000000e+00
+## 21  3.464102e+00
+## 22  2.000000e+00
+## 23  4.898425e-16
+## 24 -2.000000e+00
+## 25 -3.464102e+00</code></pre>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
